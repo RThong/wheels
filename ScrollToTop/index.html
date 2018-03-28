@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>回到顶部</title>
+	<style>
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		body{
+			height: 5000px;
+			background: linear-gradient(green, pink);
+		}
+		#backToTop{
+			position: fixed;
+			border-top: 60px solid transparent;
+			border-right:20px solid transparent;
+			border-bottom:60px solid #3498dc;
+			border-left:20px solid transparent;
+			bottom: 10%;
+			right: -5%;
+			cursor: pointer;
+			transition: all .5s ease;
+			/*opacity: 0;*/
+			transform: translate3d(0%,0,0);
+		}
+		.show{
+			transform: translate3d(-300%,0,0) !important;
+			/*opacity: 1 !important; */
+		}
+		.hide{
+			transform: translate3d(0%,0,0) !important;
+			/*opacity: 0 !important;*/
+		}
+	</style>
+</head>
+<body>
+	<div id="backToTop"></div>
+	<script src="./ScrollToTop.js"></script>
+	<script>
+		let toTop = new ScrollToTop({
+				el: '#backToTop',//返回dom元素
+        distance: 500,//出现按钮高度
+        speed: 'fast'//回到顶部速度 normal slow fast默认normal
+    })
+	</script>
+</body>
+</html>
