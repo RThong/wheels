@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>顶部进度条</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			height: 5000px;
+		}
+		#progressBar{
+			height: 3px;
+			position: fixed;
+			background: #0A74DA;
+		}
+	</style>
+</head>
+<body>
+	<div id="progressBar"></div>
+	<script src="./ProgressBar.js"></script>
+	<!-- <script src="./noodles.js"></script> -->
+	<script>
+		new ProgressBar()
+		// ProgressBar.init()
+	</script>
+</body>
+</html>
