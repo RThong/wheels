@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>懒加载</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			text-align: center;
+		}
+		.show-img{
+			display: block;
+			width: 100%;
+		}
+		p{
+			line-height: 3;
+		}
+		.bg{
+			background-image: url('loading-spin.svg');
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
+	</style>
+</head>
+<body>
+	<img src="loading-spin.svg" alt="" data-lazy-src="img1.jpg">
+	<p>这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+	这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字</p>
+	<img src="loading-spin.svg" alt="" data-lazy-src="img2.jpg">
+	<p>这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+	这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字</p>
+	<!-- <img src="loading-spin.svg" alt="" data-lazy-src="img3.jpg"> -->
+	<p data-lazy-background="img3.jpg" class="bg">这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+	这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字</p>
+	<img src="loading-spin.svg" alt="" data-lazy-src="img4.jpg">
+	<p>这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+	这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字</p>
+	<img src="loading-spin.svg" alt="" data-lazy-src="img5.jpg">
+	<p>这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+	这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字
+这是一段很长很长的文字这是一段很长很长的文字这是一段很长很长的文字</p>
+
+	<script src="./LazyLoad.js"></script>
+	<script>
+			new LazyLoad({})		
+	</script>
+</body>
+</html>
