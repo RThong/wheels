@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>下拉刷新</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+
+		}
+		.scroll-down-wrap{
+			background: #1dbb9c;
+			color: #fff;
+			text-align: center;
+			height: 0;
+			overflow: hidden;
+		}
+		.release{
+			transition: height .5s ease;
+		}
+		.wrap p{
+			padding: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	</div>
+	<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+	<script>
+		
+		// //事件触发器
+		// function EventHub(){
+  //     this.events = {}
+  //   }
+  //   EventHub.prototype.on = function(eventName, fn){
+  //     this.events[eventName] = fn
+  //   }
+  //   EventHub.prototype.trigger = function(eventName, ...rest){
+  //     if(eventName in this.events){
+  //       this.events[eventName].call(undefined, ...rest)
+  //     }
+  //   }
+
+		// let oldY,
+		// 		dist = 0,
+		// 		state = 'default',//初始状态  下拉状态   释放状态  加载状态
+		// 		refreshDist = 60,
+		// 		maxPullDist = 300,
+		// 		target = document.querySelector('.wrap'),
+		// 		downWrap,
+		// 		textContent,
+		// 		eventHub = new EventHub();
+
+		// eventHub.on('loading', function(){
+		// 	prompt('刷新中')
+		// 	downWrap.style.height = `${refreshDist}px`
+		// 	//模拟获取数据
+		// 	setTimeout(()=>{
+		// 		if(Math.random()>.5){
+		// 			prompt('刷新成功')
+		// 			target.insertBefore(document.createElement('p'),target.childNodes[0]).innerHTML = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+		// 		}
+		// 		else{
+		// 			prompt('刷新失败')
+		// 		}
+		// 		//成功 失败提示
+		// 		setTimeout(()=>{
+		// 			eventHub.trigger(state='dropup')
+		// 		},500)
+				
+		// 	},1000)
+			
+		// })
+		// eventHub.on('dropdown', function(dist){
+		// 	console.log('现在触发dropdown')
+		// 	downWrap.classList.remove('release')		
+		// 	downWrap.style.height = `${dist}px`
+		// 	prompt('下拉刷新')
+		// })
+		// eventHub.on('dropup', function(){
+		// 	console.log('现在触发dropup')			
+		// 	downWrap.style.height = `0`
+		// 	eventHub.trigger(state='default')
+		// })
+
+		// //init
+		// downWrap = document.createElement("div")
+		// downWrap.className = 'scroll-down-wrap'
+		// downWrap.innerHTML = `<p class="scroll-down-text">
+		// 											</p>`	
+		// target.parentNode.insertBefore(downWrap, target)
+		// promptContent = document.querySelector('.scroll-down-text')
+		// promptContent.style.lineHeight = `${refreshDist}px`
+
+
+		// target.addEventListener('touchstart', function(e){
+		// 	oldY = e.touches[0].pageY
+		// 	target.addEventListener('touchmove', scrollHandle)
+		// })
+		
+		// target.addEventListener('touchend', function(e){
+		// 	target.removeEventListener('touchmove', scrollHandle)
+		// 	if(state === 'default'){
+		// 		return
+		// 	}
+		// 	downWrap.classList.add('release')
+			
+		// 	if(state === 'loading'){
+		// 		eventHub.trigger(state)
+				
+		// 	}
+		// 	else{
+		// 		eventHub.trigger(state='dropup')
+		// 	}
+		// })
+
+
+		// function scrollHandle(e){
+		// 	dist = e.touches[0].pageY - oldY
+		// 	//判断是否是顶部刷新
+
+		// 	if(dist>0 && window.pageYOffset<=0){
+		// 		e.preventDefault();
+		// 		if(dist > maxPullDist){
+		// 			return
+		// 		}
+		// 		eventHub.trigger(state = 'dropdown', dist)
+				
+		// 		if(dist >= refreshDist){
+		// 			state = 'loading'
+		// 			prompt('释放刷新')
+		// 		}
+		// 	}			
+		// }
+
+
+		// function prompt(info){
+		// 	promptContent.textContent = info
+		// }
+
+		//事件触发器
+		function EventHub(){
+			this.events = {}
+		}
+		EventHub.prototype.on = function(eventName, fn){
+			this.events[eventName] = fn
+		}
+		EventHub.prototype.trigger = function(eventName, ...rest){
+			if(eventName in this.events){
+				this.events[eventName].call(undefined, ...rest)
+			}
+		}
+			
+
+
+		function PullToRefresh(options){
+			EventHub.call(this)
+			this.target = document.querySelector(options.el)
+			this.oldY = undefined
+			this.dist = 0
+			this.state = 'default'//初始状态  下拉状态   释放状态  加载状态
+			this.refreshDist = options.refreshDist
+			this.maxPullDist = options.maxPullDist
+			this.pullText= options.pullText
+			this.releaseText = options.releaseText
+			this.refreshText = options.refreshText
+			this.callback = options.onRefresh
+			this.downWrap = null
+			this.promptContent = null
+			
+			this.init()
+		}
+		//继承事件触发器
+		PullToRefresh.prototype = Object.create(EventHub.prototype)
+
+		PullToRefresh.prototype.init = function(){
+			this.addDom()
+			this.registerFn()
+			this.bindEvent()
+		}
+
+		//添加下拉背景框
+		PullToRefresh.prototype.addDom = function(){
+			this.downWrap = document.createElement("div")
+			this.downWrap.className = 'scroll-down-wrap'
+			this.downWrap.innerHTML = `<p class="scroll-down-text"></p>`	
+			this.target.parentNode.insertBefore(this.downWrap, this.target)
+			this.promptContent = document.querySelector('.scroll-down-text')
+			this.promptContent.style.lineHeight = `${this.refreshDist}px`
+		}
+		//给不同状态绑定回调
+		PullToRefresh.prototype.registerFn = function(){
+			this.on('loading', ()=>{
+				this.prompt(this.refreshText)
+				this.downWrap.style.height = `${this.refreshDist}px`
+				this.callback()			
+			})
+			this.on('dropdown', (dist)=>{
+				console.log('现在触发dropdown')
+				this.downWrap.classList.remove('release')		
+				this.downWrap.style.height = `${this.dist}px`
+				this.prompt(this.pullText)
+			})
+			this.on('dropup', ()=>{
+				console.log('现在触发dropup')			
+				this.downWrap.style.height = `0`
+				this.trigger(this.state='default')
+			})
+		}
+		//绑定touchmove  touchend
+		PullToRefresh.prototype.bindEvent = function(){
+			this.target.addEventListener('touchstart', (e)=>{
+				this.oldY = e.touches[0].pageY
+				//touchmove放在外部  浏览器默认事件会触发
+				this.target.addEventListener('touchmove', this.scrollHandle.bind(this))
+			})
+			//先解除touchmove 让浏览器默认scroll能够生效
+			this.target.addEventListener('touchend', (e)=>{
+				this.target.removeEventListener('touchmove', this.scrollHandle.bind(this))
+				if(this.state === 'default'){
+					return
+				}
+				this.downWrap.classList.add('release')
+
+				if(this.state === 'loading'){
+					this.trigger(this.state)
+
+				}
+				else{
+					this.trigger(this.state='dropup')
+				}
+			})
+		}
+		//下拉提示信息
+		PullToRefresh.prototype.prompt = function(info){
+			this.promptContent.textContent = info
+		}
+		//touchmove回调函数
+		PullToRefresh.prototype.scrollHandle = function(e){
+			this.dist = e.touches[0].pageY - this.oldY
+			
+			//判断是否是顶部刷新
+			if(this.dist <= 0 || window.pageYOffset > 0){
+				return
+			}
+			//防止浏览器默认scroll
+			e.preventDefault();
+			if(this.dist > this.maxPullDist){
+				return
+			}
+			this.trigger(this.state = 'dropdown', this.dist)
+
+			if(this.dist >= this.refreshDist){
+				this.state = 'loading'
+				this.prompt(this.releaseText)
+			}	
+		}
+
+		PullToRefresh.prototype.success = function(){
+			this.prompt('刷新成功')
+			//成功失败提示			
+			setTimeout(()=>{
+				this.trigger(this.state='dropup')
+			},500)
+		}
+
+		PullToRefresh.prototype.fail = function(){
+			this.prompt('刷新失败')
+			//成功失败提示			
+			setTimeout(()=>{
+				this.trigger(this.state='dropup')
+			},500)
+		}
+
+		let pullToRefresh = new PullToRefresh({
+			el: '.wrap',
+			refreshDist: 60,
+			maxPullDist: 300,
+			pullText: '下拉刷新',
+			releaseText: '释放刷新',
+			refreshText: '刷新中',
+			onRefresh(){
+				//模拟获取数据
+				setTimeout(()=>{
+					if(Math.random()>.5){
+						pullToRefresh.success()
+						document.querySelector('.wrap').insertBefore(document.createElement('p'),document.querySelector('.wrap').childNodes[0]).innerHTML = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+					}
+					else{
+						pullToRefresh.fail()
+					}									
+				},1000)			
+			}
+		})
+	</script>
+	
+</body>
+</html>

@@ -13,7 +13,7 @@ LazyLoad.prototype.init = function(){
 }
 
 LazyLoad.prototype.scrollLoad = function(){
-	window.addEventListener('scroll', this.throttle(this.init.bind(this), this.delay))
+	window.addEventListener('scroll', this.throttle(this.init.bind(this)))
 }
 
 LazyLoad.prototype.throttle = function(func){
