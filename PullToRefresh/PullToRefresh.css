@@ -1,0 +1,10 @@
+.scroll-down-wrap{
+	background: #1dbb9c;
+	color: #fff;
+	text-align: center;
+	height: 0;
+	overflow: hidden;
+}
+.release{
+	transition: height .5s ease;
+}
