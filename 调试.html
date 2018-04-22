@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		html,body{
+			height: 100%;
+		}
+		.container{
+			width: 200px;
+			height: 300px;
+			overflow-y: hidden;
+			position: relative;
+			padding-right: 10px;
+		}
+		#scrollbar{
+			width: 10px;
+			height: 100%;
+			position: absolute;
+			right: 0;
+			top: 0;
+		}
+		#scroll-thumb{
+			position: absolute;
+			width: 10px;
+			background: #000;
+			height: 50px;
+			border-radius: 10px;
+		}
+		#scroll-track{
+			width: 5px;
+			height: 100%;
+			background: #ccc;
+			margin: 0 auto;
+		}
+		.ani{
+			transition: transform .3s linear;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div id="scrollbar">
+			<div id="scroll-thumb"></div>
+			<div id="scroll-track"></div>
+		</div>
+		
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+	</div>
+
+	<div class="test" style="overflow-y: scroll;width: 200px;height: 300px;margin-top: 50px;">
+				<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+		<p>这是一段话</p>
+	</div>
+	<script>
+		let target = document.querySelector('#scroll-thumb'),
+				container = document.querySelector('.container'),
+				oldY = 0,
+				translateY = 0,
+				dist
+
+		target.addEventListener('mousedown', function(){
+			target.classList.remove('ani');
+			console.log('down')
+			window.addEventListener('mousemove', handler)
+		})
+		window.addEventListener('mouseup', function(){
+			console.log('up')
+			window.removeEventListener('mousemove', handler)
+			oldY = 0
+			translateY += dist
+		})
+		//点击滑块时记录鼠标位置，滑块移除边界时记录鼠标位置
+		function handler(){
+			window.event.preventDefault()
+			if(oldY === 0){
+				oldY = window.event.screenY
+				return
+			}
+			dist = window.event.screenY - oldY
+			if(translateY + dist >= 250){
+				target.style.transform = `translateY(250px)`
+				return 
+			}
+			if(translateY + dist <= 0){
+				target.style.transform = `translateY(0px)`
+				return 
+			}
+			target.style.transform = `translateY(${translateY + dist}px)`
+			
+		}
+
+
+		container.addEventListener('wheel', function(){
+			console.dir(window.event)
+			target.classList.add('ani')
+			translateY = window.event.wheelDelta < 0 ? translateY + 50: translateY - 50
+			target.style.transform = `translateY(${translateY}px)`
+		})
+	</script>
+</body>
+</html>
