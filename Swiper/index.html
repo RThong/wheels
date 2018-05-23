@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>Swiper</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+
+		.swiper-container{
+			margin: 0 auto;
+			position: relative;
+			overflow: hidden;
+		}
+		.swiper-wrapper{
+			display: flex;
+			transition-property: transform;
+		}
+		.swiper-slide{
+			flex-shrink: 0;
+		}
+
+
+
+		.slide1{
+			background: #4390EE;
+		}
+		.slide2{
+			background: #CA4040;
+		}
+		.slide3{
+			background: #FF8604;
+		}
+
+		.container1 .swiper-slide{
+			width: 400px;
+			height: 200px;
+		}
+		.container2 .swiper-slide{
+			width: 600px;
+			height: 300px;
+		}
+	</style>
+</head>
+<body>
+	<div class="swiper-container container1">
+		<div class="swiper-wrapper">
+			<div class="swiper-slide slide1">page1</div>
+			<div class="swiper-slide slide2">page2</div>
+			<div class="swiper-slide slide3">page3</div>
+		</div>
+	</div>
+
+	<div class="swiper-container container2">
+		<div class="swiper-wrapper">
+			<div class="swiper-slide slide1">page1</div>
+			<div class="swiper-slide slide2">page2</div>
+			<div class="swiper-slide slide3">page3</div>
+		</div>
+	</div>
+	<script>
+		function Swiper(target, options){
+			this.container = document.querySelector(target)
+			this.wrapper = document.querySelector(`${target}>.swiper-wrapper`)
+			this.slide = document.querySelector(`${target}>.swiper-wrapper>.swiper-slide`)
+
+			this.slideCount = this.wrapper.children.length
+			this.width = this.slide.clientWidth
+			this.height = this.slide.clientHeight
+
+			this.originPosition = undefined
+			this.translateX = undefined
+			this.downTime = undefined
+			this.upTime = undefined
+			this.hasMouseEnd = false
+			this.translateX = undefined
+
+			this.init()
+		}
+
+		Swiper.prototype.init = function(){
+			this.build()
+			this.bindEvent()
+		}
+
+		Swiper.prototype.build = function(){		
+			const lastNode = this.wrapper.lastElementChild.cloneNode(true)
+			const firstNode = this.wrapper.firstElementChild.cloneNode(true)
+
+			this.container.style.width = `${this.width}px`
+			this.container.style.height = `${this.height}px`
+
+			this.wrapper.insertBefore(lastNode, this.wrapper.firstElementChild)
+			this.wrapper.appendChild(firstNode)
+
+			this.wrapper.style.transform = `translate3d(${-this.width}px,0,0)`
+		}
+
+		Swiper.prototype.bindEvent = function(){
+			const callback = this.handleMove.bind(this)
+			this.container.addEventListener('mousedown', (e) => {
+				e.preventDefault()
+				this.downTime = Date.now()
+				this.wrapper.style.transitionDuration = ``
+				this.translateX = this.translateX !== undefined ? this.translateX : -this.width
+
+				
+				this.hasMouseEnd = false
+				console.log('touch start')
+
+				this.originPosition = e.screenX
+
+				window.addEventListener('mousemove', callback)
+				window.addEventListener('mouseup', (e) => {
+					e.preventDefault()
+					if(this.hasMouseEnd){
+						return
+					}
+					this.page(e.screenX - this.originPosition)
+					this.hasMouseEnd = true
+					console.log('up')
+					window.removeEventListener('mousemove', callback)
+				})
+			})
+		}
+
+		Swiper.prototype.page = function(dist){
+			this.upTime = Date.now()
+			if(this.upTime - this.downTime <= 300){
+				if(dist === 0){
+					return
+				}
+				else if(dist < 0){
+					this.translateX -= this.width
+				}
+				else{
+					this.translateX += this.width
+				}
+			}
+			else{
+				const pageCount = Math.floor(Math.abs(dist)/this.width)
+				const swipeDist = Math.abs(dist)%this.width
+				//判断是否过半  以及是否滑动多页
+				if(swipeDist < this.width/2 && dist > 0){
+					this.translateX += pageCount*this.width
+				}
+				else if(swipeDist >= this.width/2 && dist > 0){
+					this.translateX += (pageCount+1)*this.width 
+				}
+				else if(swipeDist >= this.width/2 && dist < 0){
+					this.translateX -= (pageCount+1)*this.width 
+				}
+				else{
+					this.translateX -= pageCount*this.width
+				}
+			}
+			
+			this.wrapper.style.transitionDuration = `300ms`
+			this.wrapper.style.transform = `translate3d(${this.translateX}px,0,0)`
+		
+		}
+
+		Swiper.prototype.handleMove = function(e){
+			e.preventDefault()
+			//边界判断
+			if(this.translateX === 0){
+				if(e.screenX - this.originPosition > 0){
+					this.translateX = -this.slideCount*this.width
+				}
+			}
+			else if(this.translateX === -(this.slideCount+1)*this.width){
+				if(e.screenX - this.originPosition < 0){
+					this.translateX = -this.width
+				}
+			}
+			this.wrapper.style.transform = `translate3d(${this.translateX + e.screenX - this.originPosition}px,0,0)`
+		}
+
+		const swiper1 = new Swiper('.container1', {})
+
+		const swiper2 = new Swiper('.container2', {})
+
+
+
+		// window.onload = () => {
+		// 	let hasMouseEnd = false
+		// 	let downTime,upTime
+		// 	const container = document.querySelector('.swiper-container')
+		// 	const wrapper = document.querySelector('.swiper-container>.swiper-wrapper')
+		// 	const slide = document.querySelector('.swiper-container>.swiper-wrapper>.swiper-slide')
+		// 	const width = slide.clientWidth
+		// 	const height = slide.clientHeight
+		// 	const slideCount = wrapper.children.length
+		// 	const lastNode = wrapper.lastElementChild.cloneNode(true)
+		// 	const firstNode = wrapper.firstElementChild.cloneNode(true)
+
+		// 	console.dir(container)
+		// 	container.style.width = `${width}px`
+		// 	container.style.height = `${height}px`
+
+		// 	wrapper.insertBefore(lastNode, wrapper.firstElementChild)
+		// 	wrapper.appendChild(firstNode)
+
+		// 	wrapper.style.transform = `translate3d(${-width}px,0,0)`
+
+
+
+		// 	function a(e){
+		// 		//边界判断
+		// 		if(translateX === 0){
+		// 			if(e.screenX - originPosition > 0){
+		// 				translateX = -slideCount*width
+		// 			}
+		// 		}
+		// 		else if(translateX === -(slideCount+1)*width){
+		// 			if(e.screenX - originPosition < 0){
+		// 				translateX = -width
+		// 			}
+		// 		}
+		// 		wrapper.style.transform = `translate3d(${translateX + e.screenX - originPosition}px,0,0)`
+		// 	}
+
+		// 	let originPosition, translateX
+
+		// 	container.addEventListener('mousedown', function(e){
+		// 		downTime = Date.now()
+		// 		wrapper.style.transitionDuration = ``
+		// 		translateX = translateX !== undefined ? translateX : -width
+
+		// 		e.preventDefault()
+		// 		hasMouseEnd = false
+		// 		console.log('touch start')
+
+		// 		originPosition = e.screenX
+
+		// 		window.addEventListener('mousemove', a)
+		// 		window.addEventListener('mouseup', function(e){
+		// 			if(hasMouseEnd){
+		// 				return
+		// 			}
+		// 			page(e.screenX - originPosition)
+		// 			hasMouseEnd = true
+		// 			console.log('up')
+		// 			window.removeEventListener('mousemove', a)
+		// 		})
+		// 	})
+
+		// 	function page(dist){
+		// 		upTime = Date.now()
+		// 		if(upTime - downTime <= 300){
+		// 			translateX = dist < 0? translateX - width : translateX + width
+		// 		}
+		// 		else{
+		// 			const pageCount = Math.floor(Math.abs(dist)/width)
+		// 			const swipeDist = Math.abs(dist)%width
+		// 			//判断是否过半  以及是否滑动多页
+		// 			if(swipeDist < width/2 && dist > 0){
+		// 				translateX += pageCount*width
+		// 			}
+		// 			else if(swipeDist >= width/2 && dist > 0){
+		// 				translateX += (pageCount+1)*width 
+		// 			}
+		// 			else if(swipeDist >= width/2 && dist < 0){
+		// 				translateX -= (pageCount+1)*width 
+		// 			}
+		// 			else{
+		// 				translateX -= pageCount*width
+		// 			}
+		// 		}
+				
+		// 		wrapper.style.transitionDuration = `300ms`
+		// 		wrapper.style.transform = `translate3d(${translateX}px,0,0)`
+		// 	}
+		// }
+	</script>
+</body>
+</html>
